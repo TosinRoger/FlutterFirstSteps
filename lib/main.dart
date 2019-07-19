@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/cupertino.dart';
 
+import 'package:flutter_first_step_app/catlist/CatMain.dart';
+
 void main() => runApp(FriendlyChatApp());
 
 const String _name = "Astrobaldo";
@@ -57,6 +59,14 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       body: new Column(
         //modified
         children: <Widget>[
+          new Container(
+            child: FlatButton.icon(onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => CatMain()));
+            },
+                icon: Icon(Icons.exit_to_app),
+                label: Text("Open cat List")
+            ),
+          ),
           new Flexible(
             child: new ListView.builder(
               padding: new EdgeInsets.all(8.0),
@@ -182,3 +192,4 @@ class ChatMessage extends StatelessWidget {
     );
   }
 }
+

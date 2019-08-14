@@ -9,6 +9,11 @@ class CatBreedList {
 
   factory CatBreedList.fromJson(List<dynamic> parseJson) {
     List<CatBreed> list = List<CatBreed>();
+
+    parseJson.forEach((i) {
+      list.add(CatBreed.fromJson(i));
+    });
+
     return CatBreedList(
       breeds: list,
     );

@@ -12,7 +12,7 @@ class CatMain extends StatefulWidget {
 
 class MyGetHttpDataState extends State<CatMain> {
   final String url = "https://api.thecatapi.com/v1/images/search?limit=10";
-  List data;
+  List<CatBreed> breeds;
 
   // Function to get the JSON data
   Future<List<CatBreed>> getJSONData() async {
@@ -35,16 +35,16 @@ class MyGetHttpDataState extends State<CatMain> {
 
         // Extract the required part and assign it to the global variable named data
 //        data = dataConvertedToJSON['results'];
-        var a = CatBreedList.fromJson(dataConvertedToJSON['results']);
-        data = a.breeds;
+//        print("result is => $dataConvertedToJSON");
+        var a = CatBreedList.fromJson(dataConvertedToJSON);
+        breeds = a.breeds;
       });
-    }
-    else {
+    } else {
       print("algo deu ruim");
     }
 
     // To modify the state of the app, use this method
-    return data;
+    return breeds;
   }
 
   @override
@@ -54,33 +54,50 @@ class MyGetHttpDataState extends State<CatMain> {
         title: new Text("Retrieve JSON Data via HTTP GET"),
       ),
       // Create a Listview and load the data when available
-      body: new ListView.builder(
-          itemCount: data == null ? 0 : data.length,
-          itemBuilder: (BuildContext context, int index) {
-            return new Container(
-              child: new Center(
-                  child: new Column(
-                // Stretch the cards in horizontal axis
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  new Card(
-                    child: new Container(
-                      child: new Text(
-                        // Read the name field value and set it in the Text widget
-//                        data[index]['id'],
-                      "Sei la",
-                        // set some style to text
-                        style: new TextStyle(
-                            fontSize: 20.0, color: Colors.lightBlueAccent),
-                      ),
-                      // added padding
-                      padding: const EdgeInsets.all(15.0),
-                    ),
-                  )
-                ],
-              )),
-            );
-          }),
+      body: new Column(
+        children: <Widget>[
+          FlatButton.icon(
+              onPressed: () {
+                getJSONData();
+              },
+              icon: Icon(Icons.sync),
+              label: Text("Request again")),
+          new Expanded(
+              child: new ListView.builder(
+                  itemCount: breeds.length,
+                  itemBuilder: (BuildContext context, int index) {
+//                    return Text(breeds[index].url);
+//                    return Image.network(breeds[index].url, height: 100, width: 150);
+
+                    return itemList(breeds[index]);
+
+
+                  }))
+        ],
+      ),
+    );
+  }
+
+  Widget itemList(CatBreed catBreed) {
+
+    Widget complement;
+
+    if (catBreed.breeds.isEmpty) {
+      complement = Text("Acho que iria ter informação?");
+    }
+    else {
+      complement = Text(catBreed.breeds[0].name);
+    }
+
+    return Container(
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Image.network(catBreed.url, height: 100, width: 100, fit: BoxFit.cover,),
+//          Text(catBreed.id)
+            complement
+        ],
+      ),
     );
   }
 

@@ -25,17 +25,12 @@ class MyGetHttpDataState extends State<CatMain> {
     // Logs the response body to the console
     print(response.body);
 
-    // https://medium.com/flutter-community/parsing-complex-json-in-flutter-747c46655f51
-    // https://flutter.dev/docs/cookbook/networking/fetch-data
-
     if (response.statusCode == 200) {
       setState(() {
         // Get the JSON data
         var dataConvertedToJSON = json.decode(response.body);
 
         // Extract the required part and assign it to the global variable named data
-//        data = dataConvertedToJSON['results'];
-//        print("result is => $dataConvertedToJSON");
         var a = CatBreedList.fromJson(dataConvertedToJSON);
         breeds = a.breeds;
       });
@@ -49,6 +44,20 @@ class MyGetHttpDataState extends State<CatMain> {
 
   @override
   Widget build(BuildContext context) {
+
+    Widget list;
+
+    if (breeds == null) {
+      list = emptyList();
+    }
+    else {
+      list = new ListView.builder(
+          itemCount: breeds.length,
+          itemBuilder: (BuildContext context, int index) {
+            return itemList(breeds[index]);
+          });
+    }
+
     return new Scaffold(
       appBar: new AppBar(
         title: new Text("Retrieve JSON Data via HTTP GET"),
@@ -63,39 +72,38 @@ class MyGetHttpDataState extends State<CatMain> {
               icon: Icon(Icons.sync),
               label: Text("Request again")),
           new Expanded(
-              child: new ListView.builder(
-                  itemCount: breeds.length,
-                  itemBuilder: (BuildContext context, int index) {
-//                    return Text(breeds[index].url);
-//                    return Image.network(breeds[index].url, height: 100, width: 150);
-
-                    return itemList(breeds[index]);
-
-
-                  }))
+              child: list)
         ],
       ),
     );
   }
 
-  Widget itemList(CatBreed catBreed) {
+  Widget emptyList() {
+    return Center(
+      child: Text("Empty list"),
+    );
+  }
 
+  Widget itemList(CatBreed catBreed) {
     Widget complement;
 
     if (catBreed.breeds.isEmpty) {
       complement = Text("Acho que iria ter informação?");
-    }
-    else {
+    } else {
       complement = Text(catBreed.breeds[0].name);
     }
 
     return Container(
       child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          Image.network(catBreed.url, height: 100, width: 100, fit: BoxFit.cover,),
-//          Text(catBreed.id)
-            complement
+          Image.network(
+            catBreed.url,
+            height: 100,
+            width: 100,
+            fit: BoxFit.cover,
+          ),
+          complement
         ],
       ),
     );
